@@ -8,14 +8,14 @@ import com.reeta.imageandvideosunstone.fragments.ShowImagesFragment
 import com.reeta.imageandvideosunstone.fragments.ShowVideosFragment
 
 //This pagerAdapter will use for changing fragment dynamically
-class PagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle):
+class PagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
         return 2
     }
 
-    //This method will return fragment as we swipe or tab on to tab
+    //This method will return fragment as we swipe or tap on the tab
     override fun createFragment(position: Int): Fragment {
         when (position) {
             0 -> return ShowImagesFragment()

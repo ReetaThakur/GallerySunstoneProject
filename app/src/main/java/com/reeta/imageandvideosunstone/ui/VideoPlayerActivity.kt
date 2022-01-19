@@ -13,6 +13,10 @@ import com.reeta.imageandvideosunstone.R
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.custom_controller.*
 
+/*
+This screen will show our video by playing with backword, forword, and pay pause button
+and with one video controller for controlling the video
+ */
 class VideoPlayerActivity : AppCompatActivity() {
     lateinit var videoName: String
     lateinit var videoPath: String
@@ -25,19 +29,36 @@ class VideoPlayerActivity : AppCompatActivity() {
         videoPath = intent.getStringExtra("videoPath").toString()
 
         playVideo.setVideoURI(Uri.parse(videoPath))
+
+        /*
+        when we click on the video will play or pause
+         */
         playVideo.setOnPreparedListener {
             idSeelBarProgress.max = playVideo.duration
             playVideo.start()
         }
 
         playvideoName.text = videoName
+
+        /*
+        for back the video 10 second before
+         */
         idIBBack.setOnClickListener {
             playVideo.seekTo(playVideo.currentPosition - 10000)
 
         }
+
+        /*
+        for forword the video 10 seconds after
+         */
         idIBForword.setOnClickListener {
             playVideo.seekTo(playVideo.currentPosition + 10000)
         }
+
+        /*
+        button for pay and pause video, if video is playing the while clicking it will pasue
+        and if video is pause then it will play and change button image accordingly
+         */
         idIBPlay.setOnClickListener {
             if (playVideo.isPlaying) {
                 playVideo.pause()
@@ -48,6 +69,10 @@ class VideoPlayerActivity : AppCompatActivity() {
             }
         }
 
+        /*
+        for showing the screen while clicking the screen and hinding the screen if it already
+        showing
+         */
         idRLVideo.setOnClickListener {
             if (isOpen) {
                 hideControls()
@@ -61,6 +86,9 @@ class VideoPlayerActivity : AppCompatActivity() {
         initilizeSeekbar()
     }
 
+    /*
+    This method will show progress bar and the timing of the video
+     */
     private fun setHandler() {
         val handler = Handler()
         val runnable: Runnable = object : Runnable {
@@ -76,6 +104,10 @@ class VideoPlayerActivity : AppCompatActivity() {
         handler.postDelayed(runnable, 500)
     }
 
+    /*
+    This method will give timing of that video in partivular format for showing the video
+    timing
+     */
     private fun convertTime(ms: Int): String? {
         val time: String
         val seconds: Int
@@ -98,6 +130,10 @@ class VideoPlayerActivity : AppCompatActivity() {
         return time
     }
 
+    /*
+    This method will show seekbar to showing that how much video is remaing or controlling
+    that video as user want
+     */
     private fun initilizeSeekbar() {
         idSeelBarProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -116,6 +152,10 @@ class VideoPlayerActivity : AppCompatActivity() {
         })
     }
 
+    /*
+    If clicking on the screen our screen will hide, all these functionality will controll
+    by this method
+     */
     fun hideControls() {
         idRLControll.visibility = View.GONE
         val window: Window = this.window
@@ -140,6 +180,10 @@ class VideoPlayerActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    If clicking on the screen our screen will show again, all these functionality will
+    control by this method
+     */
     fun showControls() {
         idRLControll.visibility = View.VISIBLE
         val window: Window = this.window

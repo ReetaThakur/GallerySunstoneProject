@@ -24,12 +24,16 @@ import com.reeta.imageandvideosunstone.ui.VideoPlayerActivity
 import kotlinx.android.synthetic.main.fragment_show_videos.*
 import java.util.ArrayList
 
-
-class ShowVideosFragment : Fragment(R.layout.fragment_show_videos),VideoClickListner {
+/*
+In this Fragment we are setting adapter and layoutManager for showing our device videos in
+grid form and for clicking video we are implementing the VideoClickListner interface.
+For fetching videos from device I am using content provider ,content provider will give
+all videos and storing in the videoList list and give this list to adapter
+ */
+class ShowVideosFragment : Fragment(R.layout.fragment_show_videos), VideoClickListner {
 
     lateinit var videoAdapter: VideoAdapter
-    var videoList=ArrayList<VideoModel>()
-    private var STORAGE_PERMISSION=101
+    var videoList = ArrayList<VideoModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,53 +41,53 @@ class ShowVideosFragment : Fragment(R.layout.fragment_show_videos),VideoClickLis
         getVideos()
     }
 
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode==STORAGE_PERMISSION){
-//            if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
-//                Toast.makeText(context,"Permission granted", Toast.LENGTH_LONG).show()
-//                getVideos()
-//            }else{
-//                Toast.makeText(context,"The App will not work without permission", Toast.LENGTH_LONG).show()
-//
-//            }
-//        }
-//    }
-
+    /*
+    getVideos method will fetch all videos from the device and store in the videoList
+    list, I am fetching video image, path(means video), and video title. And make cursor
+    object so cursor will give data one by one.
+     */
     @SuppressLint("Range")
-    fun getVideos(){
+    fun getVideos() {
         val contentResolver: ContentResolver = requireActivity().contentResolver
-        var uri:Uri=MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        var cursor =contentResolver.query(uri,null,null,null,null)
-        if (cursor!=null && cursor.moveToFirst()){
+        var uri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        var cursor = contentResolver.query(uri, null, null, null, null)
+        if (cursor != null && cursor.moveToFirst()) {
             do {
-                var videoTitle=cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.TITLE))
-                var videoPath=cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA))
-                var videoThumbnail= ThumbnailUtils.createVideoThumbnail(videoPath,MediaStore.Images.Thumbnails.MINI_KIND)
-                videoThumbnail?.let { VideoModel(videoTitle,videoPath, it) }
+                var videoTitle =
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.TITLE))
+                var videoPath = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA))
+                var videoThumbnail = ThumbnailUtils.createVideoThumbnail(
+                    videoPath,
+                    MediaStore.Images.Thumbnails.MINI_KIND
+                )
+                videoThumbnail?.let { VideoModel(videoTitle, videoPath, it) }
                     ?.let { videoList.add(it) }
-            }while (cursor.moveToNext())
+            } while (cursor.moveToNext())
         }
         videoAdapter.notifyDataSetChanged()
     }
 
-    fun setRecyclerView(){
-        videoAdapter= VideoAdapter(videoList,this)
-        val gridLayoutManager=GridLayoutManager(context,2)
+    /*
+    I am setting recyclerView with adapter and layoutManager for showing my videos in grid
+    form means two dimension form
+     */
+    fun setRecyclerView() {
+        videoAdapter = VideoAdapter(videoList, this)
+        val gridLayoutManager = GridLayoutManager(context, 2)
         videoRecyclerView.apply {
-            adapter=videoAdapter
-            layoutManager=gridLayoutManager
+            adapter = videoAdapter
+            layoutManager = gridLayoutManager
         }
     }
 
+    /*
+   this is interface override method if in case user want to play the video then video will
+   play in another screen.
+    */
     override fun onVideoClick(position: Int) {
-        val intent= Intent(context, VideoPlayerActivity::class.java)
-        intent.putExtra("videoName",videoList[position].videoName)
-        intent.putExtra("videoPath",videoList[position].videoPath)
+        val intent = Intent(context, VideoPlayerActivity::class.java)
+        intent.putExtra("videoName", videoList[position].videoName)
+        intent.putExtra("videoPath", videoList[position].videoPath)
         startActivity(intent)
     }
 
